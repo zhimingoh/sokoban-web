@@ -1,0 +1,84 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #f1f5f9;
+  background: #0b1020;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #172554, #0b1020 60%);
+}
+
+.app {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 10px;
+}
+
+.panel {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  opacity: 0.95;
+}
+
+.controls {
+  margin: 12px 0 18px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+button {
+  border-radius: 10px;
+  border: 1px solid #334155;
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.grid {
+  margin: 0 auto;
+  width: min(90vw, 480px);
+  aspect-ratio: 1/1;
+  display: grid;
+  border: 2px solid #334155;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cell {
+  box-sizing: border-box;
+  border: 1px solid #0f172a33;
+}
+.cell.wall { background: #334155; }
+.cell.floor { background: #0f172a; }
+.cell.target { background: #172554; box-shadow: inset 0 0 0 2px #38bdf8; }
+.cell.box { background: #92400e; }
+.cell.player { outline: 3px solid #22c55e; outline-offset: -3px; }
+.cell.box-on-target { background: #16a34a; }
+
+.level-list {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+}
+
+.level-list button.active {
+  background: #2563eb;
+  border-color: #60a5fa;
+}
