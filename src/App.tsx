@@ -95,26 +95,21 @@ function App() {
 
   const level = levels[levelIndex]
 
-  useEffect(() => {
-    setPlayer(clonePos(level.player))
-    setBoxes(level.boxes.map(clonePos))
+  const isWinWithBoxes = (candidateBoxes: Pos[]) =>
+    level.cells.every((row, y) =>
+      row.every((cell, x) => (cell === 'target' ? candidateBoxes.some((b) => b.x === x && b.y === y) : true)),
+    )
+
+  const isWin = isWinWithBoxes(boxes)
+
+  function loadLevel(index: number) {
+    const nextLevel = levels[index]
+    setLevelIndex(index)
+    setPlayer(clonePos(nextLevel.player))
+    setBoxes(nextLevel.boxes.map(clonePos))
     setSteps(0)
     setHistory([])
-  }, [level])
-
-  const isWin = level.cells.every((row, y) =>
-    row.every((cell, x) => (cell === 'target' ? boxes.some((b) => b.x === x && b.y === y) : true)),
-  )
-
-  useEffect(() => {
-    if (isWin) {
-      const next = Math.max(unlocked, levelIndex + 2)
-      if (next !== unlocked && next <= TOTAL_LEVELS + 1) {
-        setUnlocked(next)
-        localStorage.setItem(STORAGE_KEY, String(next))
-      }
-    }
-  }, [isWin, levelIndex, unlocked])
+  }
 
   function move(d: Pos) {
     if (isWin) return
@@ -134,6 +129,14 @@ function App() {
       setBoxes(updated)
       setPlayer(next)
       setSteps((s) => s + 1)
+
+      if (isWinWithBoxes(updated)) {
+        const nextUnlocked = Math.max(unlocked, levelIndex + 2)
+        if (nextUnlocked !== unlocked && nextUnlocked <= TOTAL_LEVELS + 1) {
+          setUnlocked(nextUnlocked)
+          localStorage.setItem(STORAGE_KEY, String(nextUnlocked))
+        }
+      }
       return
     }
 
@@ -179,8 +182,8 @@ function App() {
       </div>
 
       <div className="controls">
-        <button onClick={() => setLevelIndex((i) => Math.max(0, i - 1))}>上一关</button>
-        <button onClick={() => setLevelIndex((i) => Math.min(TOTAL_LEVELS - 1, i + 1))} disabled={!isWin && levelIndex + 2 > unlocked}>下一关</button>
+        <button onClick={() => loadLevel(Math.max(0, levelIndex - 1))}>上一关</button>
+        <button onClick={() => loadLevel(Math.min(TOTAL_LEVELS - 1, levelIndex + 1))} disabled={!isWin && levelIndex + 2 > unlocked}>下一关</button>
         <button onClick={undo}>撤销</button>
         <button onClick={reset}>重置</button>
       </div>
@@ -207,7 +210,7 @@ function App() {
               key={l.id}
               className={i === levelIndex ? 'active' : ''}
               disabled={locked}
-              onClick={() => setLevelIndex(i)}
+              onClick={() => loadLevel(i)}
               title={locked ? '未解锁' : `第 ${l.id} 关`}
             >
               {l.id}
